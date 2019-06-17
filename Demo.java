@@ -7,11 +7,6 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-System.setProperty("file.encoding","UTF-8");
-Field charset = Charset.class.getDeclaredField("defaultCharset");
-charset.setAccessible(true);
-charset.set(null,null);
-
 // An AWT GUI program inherits the top-level container java.awt.Frame
 public class Demo extends Frame
       implements ActionListener, WindowListener {
