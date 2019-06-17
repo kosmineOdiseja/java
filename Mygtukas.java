@@ -1,13 +1,130 @@
-	import java.awt.Frame;
-	import java.applet.Applet;
-	import java.awt.Button;
+import java.awt.*;        // Using AWT containers and components
+import java.awt.event.*;  // Using AWT events classes and listener interfaces
+ 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+System.setProperty("file.encoding","UTF-8");
+Field charset = Charset.class.getDeclaredField("defaultCharset");
+charset.setAccessible(true);
+charset.set(null,null);
+
+public class Mygtukas extends Frame // nustatome public class ir tipas 
+      implements ActionListener, WindowListener {
+      // This class acts as listener for ActionEvent and WindowEvent
+      // A Java class can extend only one superclass, but it can implement multiple interfaces.
+ 
+   private TextArea tfCount;  // Declare a TextField component tfcount tai yra pavadinimas 
+   private Button btnCount;    // Declare a Button component
+   private int count = 0;      // Counter's value
+ String thisLine = null;
+	      
+   // Constructor to setup the GUI components and event handlers
+   public Mygtukas () {
+     setLayout(new FlowLayout()); // "super" Frame sets to FlowLayout
+ 
+      add(new Label("Counter"));   // "super" Frame adds an anonymous Label
+ 
+     btnCount = new Button("Count");  // Construct the Button
+      add(btnCount);                   // "super" Frame adds Button
+	   
+	tfCount = new TextArea(" Test"); // Construct the TextField + galime nurodyti dydi 
+      tfCount.setEditable(false);       // read-only
+      add(tfCount);                     // "super" Frame adds TextField
+ 
+       btnCount.addActionListener(this); // nustatome kad mygtukas klausys komandos?
+     
+      addWindowListener(this);
+          setTitle("WindowEvent Demo"); // "super" Frame sets title
+      setSize(500, 500);            // "super" Frame sets initial size
+      setVisible(true);             // "super" Frame shows
+   }
+ 
+   // The entry main() method
+   public static void main(String[] args) {
+      new Demo();  // Let the construct do the job
+   }
+ 
+   /* ActionEvent handler */
+   @Override
+   public void actionPerformed(ActionEvent evt) {
+    //  ++count;
+     // tfCount.setText(count + "");
 	
-	public class Mygtukas extends Frame, applet {
-          implements ActionListener, WindowListener, Mygtukas(){    
-		  
-		  		Button button1 = new Button();
-				button1.setLabel("vykdyti");
-				add(button1);
-    		
-    		}    
-     }
+      
+		try {
+																									// open input stream test.txt for reading purpose.
+			BufferedReader br = new BufferedReader( new FileReader( "skaiciai.csv" ) );
+			
+			tfCount.append ( "duomenų failo turinys:" + "\n" );
+			
+			double[] skaiciai = new double[10000];
+			int kiekis = 0;
+			double suma = 0, vid = 0;
+		 
+			while ( ( thisLine = br.readLine() ) != null ) {
+			 
+				
+				tfCount.append ( thisLine + "\n" );
+				String[] skaiciu_strs = thisLine.split ( "," );
+				
+				
+				for ( int i=0; i < skaiciu_strs .length; i++ ) { 
+				
+					skaiciai [ kiekis ] = 
+					
+						Double.parseDouble (  skaiciu_strs [ i ] );
+					kiekis++;
+				}
+			} 
+			
+			tfCount.append ( "Nuskaityta " + kiekis + " skaičių. " + "\n" );
+			if ( kiekis > 0 ) {
+			
+				double max = skaiciai [ 0 ];
+				
+				for ( int i = 0; i<kiekis; i++ ) {
+					
+					suma += skaiciai [ i ];
+				
+					if ( max < skaiciai [ i ] ) {
+					
+						max = skaiciai [ i ]; 
+					}
+				}
+				
+				tfCount.append ( "Maksimali reiksme skaiciu sekoje: " + max + "\n");
+				tfCount.append ( "Skaiciu suma: " + suma + "\n");
+				vid = suma / kiekis;
+				tfCount.append ( "Vidurkis: " + vid + "\n" );				
+			}
+			
+           
+      } catch(Exception e) {
+         e.printStackTrace();
+      }   
+	   
+	
+	   
+   }
+   
+ 
+   /* WindowEvent handlers */
+   // Called back upon clicking close-window button
+   @Override
+   public void windowClosing(WindowEvent evt) {
+      System.exit(0);  // Terminate the program
+   }
+ 
+   // Not Used, BUT need to provide an empty body to compile.
+   @Override public void windowOpened(WindowEvent evt) { }
+   @Override public void windowClosed(WindowEvent evt) { }
+   // For Debugging
+   @Override public void windowIconified(WindowEvent evt) { System.out.println("Window Iconified"); }
+   @Override public void windowDeiconified(WindowEvent evt) { System.out.println("Window Deiconified"); }
+   @Override public void windowActivated(WindowEvent evt) { System.out.println("Window Activated"); }
+   @Override public void windowDeactivated(WindowEvent evt) { System.out.println("Window Deactivated"); }
+}
